@@ -1,6 +1,6 @@
 package biblioteca;
 
-public class HelloWorld {
+public class Principal {
 	public static void main(String[] args) {
 
 	}
