@@ -2,11 +2,16 @@ package biblioteca;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import config.ConfigSQLite;
 import excepciones.BDException;
+import modelo.Libro;
+import modelo.Prestamo;
+import modelo.Socio;
 
 //TODO añadir excepciones con mensajes de error personalizados para cada caso
 
@@ -26,10 +31,11 @@ public class AccesoPrestamo {
 	 */
 	public static boolean insertarPrestamo(int codigo, String isbn, String titulo, String escritor, int publicacion,
 			double puntuacion) throws BDException, SQLException {
-    
+		Connection conexion = ConfigSQLite.abrirConexion();
+
 		String query = "INSERT INTO prestamo VALUES ('?', '?', '?', '?', '?', '?')";
 
-		ps = conexion.prepareStatement(query);
+		PreparedStatement ps = conexion.prepareStatement(query);
 		ps.setInt(1, codigo);
 		ps.setString(2, isbn);
 		ps.setString(3, titulo);
@@ -37,7 +43,7 @@ public class AccesoPrestamo {
 		ps.setInt(5, publicacion);
 		ps.setDouble(6, puntuacion);
 
-		inserciones = ps.executeUpdate();
+		int inserciones = ps.executeUpdate();
 		ConfigSQLite.cerrarConexion(conexion);
 
 		return inserciones > 0;
@@ -54,22 +60,18 @@ public class AccesoPrestamo {
 	 */
 	public static boolean modificarPrestamo(String fechaDevolucion, int codigoLibro, int codigoSocio,
 			String fechaInicio) throws BDException, SQLException {
-		PreparedStatement ps = null;
-		Connection conexion = null;
-		int modificaciones = 0;
-
-		conexion = ConfigSQLite.abrirConexion();
+		Connection conexion = ConfigSQLite.abrirConexion();
 
 		String query = "UPDATE prestamo SET fecha_devolucion = '?' "
 				+ "WHERE codigo_libro = '?' AND codigo_socio = '?' " + "AND fecha_inicio = '?' ;";
 
-		ps = conexion.prepareStatement(query);
+		PreparedStatement ps = conexion.prepareStatement(query);
 		ps.setString(1, fechaDevolucion);
 		ps.setInt(2, codigoLibro);
 		ps.setInt(3, codigoSocio);
 		ps.setString(4, fechaInicio);
 
-		modificaciones = ps.executeUpdate();
+		int modificaciones = ps.executeUpdate();
 		ConfigSQLite.cerrarConexion(conexion);
 
 		return modificaciones > 0;
@@ -86,8 +88,6 @@ public class AccesoPrestamo {
 	 */
 	public static boolean eliminarPrestamo(int codigoLibro, int codigoSocio, String fechaInicio)
 			throws BDException, SQLException {
-		int modificaciones = 0;
-
 		Connection conexion = ConfigSQLite.abrirConexion();
 
 		String query = "DELETE FROM prestamo WHERE codigo_libro = '?' "
@@ -98,66 +98,78 @@ public class AccesoPrestamo {
 		ps.setInt(2, codigoSocio);
 		ps.setString(3, fechaInicio);
 
-		modificaciones = ps.executeUpdate();
+		int modificaciones = ps.executeUpdate();
 		ConfigSQLite.cerrarConexion(conexion);
 
 		return modificaciones > 0;
 	}
 
-  public static ArrayList<Prestamo> consultarPrestamos() throws BDException, SQLException {
-    Connection conexion = ConfigSQLite.abrirConexion();
+	/**
+	 * 
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
+	public static ArrayList<Prestamo> consultarPrestamos() throws BDException, SQLException {
+		Connection conexion = ConfigSQLite.abrirConexion();
 
-    String query = "SELECT * FROM prestamo";
-    
-    Statement sentencia = conexion.createStatement();
-    ResultSet resultados = sentencia.executeQuery(query);
-    
-    ArrayList<Prestamo> prestamos = new ArrayList<Prestamo>();
-    
+		String query = "SELECT * FROM prestamo";
 
-    //TODO probar si al obtener nulo en una consulta, se puede insertar NULL como String
-    while (resultados.next()) {
-      Libro libro = new Libro(resultados.getInt("codigo_libro"));
-      Socio socio = new Socio(resultados.getInt("codigo_socio"))
+		Statement sentencia = conexion.createStatement();
+		ResultSet resultados = sentencia.executeQuery(query);
 
-      String fechaInicio = resultados.getString("fecha_inicio");
-      String fechaFin = resultados.getString("fecha_fin");
-      String fechaDevolucion = resultados.getString("fecha_devolucion");
-      
-      if (fechaDevolucion.equalsIgnoreCase("NULL")) {
-        Prestamo prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin, fechaDevolucion);
-      } else {
-        Prestamo prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin);
-      }
-      prestamos.add(prestamo);
-    }
+		ArrayList<Prestamo> prestamos = new ArrayList<Prestamo>();
 
-    return prestamos;
-  }
+		// TODO probar si al obtener nulo en una consulta, se puede insertar NULL como String
+		while (resultados.next()) {
+			Libro libro = new Libro(resultados.getInt("codigo_libro"));
+			Socio socio = new Socio(resultados.getInt("codigo_socio"));
 
-  public static ArrayList<> consultarPrestamosNoDevuletos() throws BDException, SQLException {
-    Connection conexion = ConfigSQLite.abrirConexion();
-    
-    String query = "SELECT * FROM prestamo WHERE fecha_devolucion IS NULL";
+			String fechaInicio = resultados.getString("fecha_inicio");
+			String fechaFin = resultados.getString("fecha_fin");
+			String fechaDevolucion = resultados.getString("fecha_devolucion");
 
-    Statement sentencia = conexion.createStatement();
-    ResultSet resultados = sentencia.executeQuery(query);
+			Prestamo prestamo = null;
+			if (fechaDevolucion.equalsIgnoreCase("NULL")) {
+				prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin, fechaDevolucion);
+			} else {
+				prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin);
+			}
+			prestamos.add(prestamo);
+		}
 
-    ArrayList<Prestamo> prestamos = new ArrayList<Prestamo>();
+		return prestamos;
+	}
 
-    while (resultados.next()) {
-      Libro libro = new Libro(resultados.getInt("codigo_libro"));
-      Socio socio = new Socio(resultados.getInt("codigo_socio"));
-      
-      String fechaInicio = resultados.getString("fecha_inicio");
-      String fechaFin = resultados.getString("fecha_fin");
-      String fechaDevolucion = resultados.getString("fecha_devolucion");
-      
-      Prestamo prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin, fechaDevolucion);
+	/**
+	 * 
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
+	public static ArrayList<Prestamo> consultarPrestamosNoDevuletos() throws BDException, SQLException {
+		Connection conexion = ConfigSQLite.abrirConexion();
 
-      prestamos.add(prestamo);
-    }
+		String query = "SELECT * FROM prestamo WHERE fecha_devolucion IS NULL";
 
-    return prestamos;
-  } 
+		Statement sentencia = conexion.createStatement();
+		ResultSet resultados = sentencia.executeQuery(query);
+
+		ArrayList<Prestamo> prestamos = new ArrayList<Prestamo>();
+
+		while (resultados.next()) {
+			Libro libro = new Libro(resultados.getInt("codigo_libro"));
+			Socio socio = new Socio(resultados.getInt("codigo_socio"));
+
+			String fechaInicio = resultados.getString("fecha_inicio");
+			String fechaFin = resultados.getString("fecha_fin");
+			String fechaDevolucion = resultados.getString("fecha_devolucion");
+
+			Prestamo prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin, fechaDevolucion);
+
+			prestamos.add(prestamo);
+		}
+
+		return prestamos;
+	}
 }

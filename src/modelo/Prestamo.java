@@ -8,22 +8,24 @@ public class Prestamo {
 	private String fechaInicio;
 	private String fechaFin;
 	private String fechaDevolucion;
-	
+
 	public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin, String fechaDevolucion) {
+		super();
 		this.libro = libro;
 		this.socio = socio;
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
 		this.fechaDevolucion = fechaDevolucion;
 	}
-  
-  public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin) {
-    this.libro = libro;
-    this.socio = socio;
-    this.fechaInicio = fechaInicio;
-    this.fechaFin = fechaFin;
-  }
 
+	public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin) {
+		super();
+		this.libro = libro;
+		this.socio = socio;
+		this.fechaInicio = fechaInicio;
+		this.fechaFin = fechaFin;
+	}
+	
 	public Libro getLibro() {
 		return libro;
 	}
