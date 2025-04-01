@@ -7,15 +7,22 @@ public class Prestamo {
 	private Socio socio;
 	private String fechaInicio;
 	private String fechaFin;
-	private String fecha_devolucion;
+	private String fechaDevolucion;
 	
-	public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin, String fecha_devolucion) {
+	public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin, String fechaDevolucion) {
 		this.libro = libro;
 		this.socio = socio;
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
-		this.fecha_devolucion = fecha_devolucion;
+		this.fechaDevolucion = fechaDevolucion;
 	}
+  
+  public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin) {
+    this.libro = libro;
+    this.socio = socio;
+    this.fechaInicio = fechaInicio;
+    this.fechaFin = fechaFin;
+  }
 
 	public Libro getLibro() {
 		return libro;
@@ -50,11 +57,11 @@ public class Prestamo {
 	}
 
 	public String getFecha_devolucion() {
-		return fecha_devolucion;
+		return fechaDevolucion;
 	}
 
-	public void setFecha_devolucion(String fecha_devolucion) {
-		this.fecha_devolucion = fecha_devolucion;
+	public void setFecha_devolucion(String fechaDevolucion) {
+		this.fechaDevolucion = fechaDevolucion;
 	}
 
 	@Override
@@ -73,6 +80,12 @@ public class Prestamo {
 		Prestamo other = (Prestamo) obj;
 		return Objects.equals(fechaInicio, other.fechaInicio) && Objects.equals(libro, other.libro)
 				&& Objects.equals(socio, other.socio);
+	}
+
+	@Override
+	public String toString() {
+		return "Prestamo [Código de libro: " + libro.getCodigo() + ", Código de socio: " + socio.getCodigo() + ", Fecha inicio: " + fechaInicio + ", Fecha fin: "
+				+ fechaFin + ", Fecha devolucion=" + fechaDevolucion + "]\n";
 	}
 	
 }

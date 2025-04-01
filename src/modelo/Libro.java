@@ -18,6 +18,10 @@ public class Libro {
 		this.anyoPublicacion = anyoPublicacion;
 		this.puntuacion = puntuacion;
 	}
+  
+  public Libro (int codigo) {
+    this.codigo = codigo;
+  }
 
 	public int getCodigo() {
 		return codigo;
@@ -66,13 +70,7 @@ public class Libro {
 	public void setPuntuacion(double puntuacion) {
 		this.puntuacion = puntuacion;
 	}
-	
-	@Override
-	public String toString() {
-		return "Libro [Código: " + codigo + ", ISBN:" + isbn + ", Título: " + titulo + ", Escritor: " + escritor
-				+ ", Año de publicación: " + anyoPublicacion + ", Puntuación: " + puntuacion + "]\n";
-	}
-	
+		
 	@Override
 	public int hashCode() {
 		return Objects.hash(codigo);
@@ -88,5 +86,11 @@ public class Libro {
 			return false;
 		Libro other = (Libro) obj;
 		return codigo == other.codigo;
+	}
+	
+	@Override
+	public String toString() {
+		return "Libro [Código: " + codigo + ", ISBN:" + isbn + ", Título: " + titulo + ", Escritor: " + escritor
+				+ ", Año de publicación: " + anyoPublicacion + ", Puntuación: " + puntuacion + "]\n";
 	}
 }

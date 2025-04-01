@@ -18,6 +18,10 @@ public class Socio {
 		this.telefono = telefono;
 		this.correo = correo;
 	}
+  
+  public Socio(int codigo) {
+    this.codigo = codigo;
+  }
 
 	public int getCodigo() {
 		return codigo;
@@ -82,6 +86,12 @@ public class Socio {
 			return false;
 		Socio other = (Socio) obj;
 		return codigo == other.codigo;
+	}
+
+	@Override
+	public String toString() {
+		return "Socio [Código: " + codigo + ", DNI: " + dni + ", Nombre: " + nombre + ", Domicilio: " + domicilio
+				+ ", Teléfono: " + telefono + ", Correo: " + correo + "]\n";
 	}
 	
 }
