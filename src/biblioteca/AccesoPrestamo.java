@@ -124,8 +124,11 @@ public class AccesoPrestamo {
       String fechaFin = resultados.getString("fecha_fin");
       String fechaDevolucion = resultados.getString("fecha_devolucion");
       
-      Prestamo prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin, fechaDevolucion);
-
+      if (fechaDevolucion.equalsIgnoreCase("NULL")) {
+        Prestamo prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin, fechaDevolucion);
+      } else {
+        Prestamo prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin);
+      }
       prestamos.add(prestamo);
     }
 
@@ -135,7 +138,7 @@ public class AccesoPrestamo {
   public static ArrayList<> consultarPrestamosNoDevuletos() throws BDException, SQLException {
     Connection conexion = ConfigSQLite.abrirConexion();
     
-    String query = "";
+    String query = "SELECT * FROM prestamo WHERE fecha_devolucion IS NULL";
 
     Statement sentencia = conexion.createStatement();
     ResultSet resultados = sentencia.executeQuery(query);
@@ -145,7 +148,16 @@ public class AccesoPrestamo {
     while (resultados.next()) {
       Libro libro = new Libro(resultados.getInt("codigo_libro"));
       Socio socio = new Socio(resultados.getInt("codigo_socio"));
-      Prestamo prestamo = new Prestamo();
+      
+      String fechaInicio = resultados.getString("fecha_inicio");
+      String fechaFin = resultados.getString("fecha_fin");
+      String fechaDevolucion = resultados.getString("fecha_devolucion");
+      
+      Prestamo prestamo = new Prestamo(libro, socio, fechaInicio, fechaFin, fechaDevolucion);
+
+      prestamos.add(prestamo);
     }
+
+    return prestamos;
   } 
 }
