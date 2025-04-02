@@ -8,7 +8,6 @@ import modelo.Libro;
 
 public class AccesoLibro {	
 	/**
-	 * Insertar un libro en la base de datos.
 	 * 
 	 * @param isbn
 	 * @param titulo
@@ -31,7 +30,7 @@ public class AccesoLibro {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 			
-			String query = "INSERT INTO libro (isbn, titulo, escritor, anyo_publicacion, puntuacion) VALUES (?, ?, ?, ?, ?)";
+			String query = "INSERT INTO libro (isbn, titulo, escritor, anyo_publicacion, puntuacion) VALUES (?, ?, ?, ?, ?);";
 
 			ps = conexion.prepareStatement(query);
 
@@ -77,7 +76,7 @@ public class AccesoLibro {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 			
-			String query = "DELETE FROM libro WHERE codigo = ?";
+			String query = "DELETE FROM libro WHERE codigo = ?;";
 			
 			ps = conexion.prepareStatement(query);
 			ps.setInt(1, codigo);
@@ -115,7 +114,7 @@ public class AccesoLibro {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 			
-			String query = "SELECT * FROM libro";
+			String query = "SELECT * FROM libro;";
 			
 			ps = conexion.prepareStatement(query);
 			
@@ -162,7 +161,7 @@ public class AccesoLibro {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 			
-			String query = "SELECT * FROM libro WHERE escritor = ? ORDER BY puntuacion DESC";
+			String query = "SELECT * FROM libro WHERE escritor = ? ORDER BY puntuacion DESC;";
 			
 			ps = conexion.prepareStatement(query);
 			ps.setString(1, escritor);
@@ -205,7 +204,7 @@ public class AccesoLibro {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 			
-			String query = "SELECT * FROM libro WHERE codigo NOT IN (SELECT codigo_libro FROM prestamo)";
+			String query = "SELECT * FROM libro WHERE codigo NOT IN (SELECT codigo_libro FROM prestamo);";
 			ps = conexion.prepareStatement(query);
 			ResultSet resultados = ps.executeQuery();
 
@@ -251,7 +250,7 @@ public class AccesoLibro {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 			
-			String query = "SELECT * FROM libro WHERE codigo IN (SELECT codigo_libro FROM prestamo WHERE fecha_devolucion = ?)";
+			String query = "SELECT * FROM libro WHERE codigo IN (SELECT codigo_libro FROM prestamo WHERE fecha_devolucion = ?);";
 			
 			ps = conexion.prepareStatement(query);
 			ps.setString(1, fechaDevolucion);

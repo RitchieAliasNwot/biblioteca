@@ -13,8 +13,6 @@ import modelo.Libro;
 import modelo.Prestamo;
 import modelo.Socio;
 
-//TODO añadir excepciones con mensajes de error personalizados para cada caso
-
 public class AccesoPrestamo {
 
 	/**
@@ -42,7 +40,7 @@ public class AccesoPrestamo {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 
-			String query = "INSERT INTO prestamo VALUES (?, ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO prestamo VALUES (?, ?, ?, ?, ?, ?);";
 
 			ps = conexion.prepareStatement(query);
 			ps.setInt(1, codigo);
@@ -176,7 +174,7 @@ public class AccesoPrestamo {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 
-			String query = "SELECT * FROM prestamo";
+			String query = "SELECT * FROM prestamo;";
 
 			Statement sentencia = conexion.createStatement();
 			ResultSet resultados = sentencia.executeQuery(query);
@@ -266,4 +264,5 @@ public class AccesoPrestamo {
 	 * y fecha de devolución de los préstamos 
 	 * realizados en una fecha de la base de datos.
 	 */
+	// public static ArrayList<Libro> consultar
 }
