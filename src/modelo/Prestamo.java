@@ -84,8 +84,8 @@ public class Prestamo {
 
 	@Override
 	public String toString() {
-		return "Prestamo [Código de libro: " + libro.getCodigo() + ", Código de socio: " + socio.getCodigo() + ", Fecha inicio: " + fechaInicio + ", Fecha fin: "
-				+ fechaFin + ", Fecha devolucion=" + fechaDevolucion + "]\n";
+		return "Préstamo [Código de libro: " + libro.getCodigo() + ", Código de socio: " + socio.getCodigo() + ", Fecha inicio: " + fechaInicio + ", Fecha fin: "
+				+ fechaFin + ", Fecha devolución: " + fechaDevolucion + "]\n";
 	}
 	
 }
