@@ -17,6 +17,7 @@ public class AccesoPrestamo {
 
 	/**
 	 * Insertar un préstamo en la base de datos
+	 * 
 	 * @param codigo
 	 * @param isbn
 	 * @param titulo
@@ -27,8 +28,7 @@ public class AccesoPrestamo {
 	 * @throws BDException
 	 * @throws SQLException
 	 */
-	public static boolean insertarPrestamo(int codigo, String isbn, String titulo, String escritor, int publicacion,
-			double puntuacion) throws BDException, SQLException {
+	public static boolean insertarPrestamo(int codigoLibro, int codigoSocio, String fechaInicio, String fechaFin) throws BDException, SQLException {
 		Connection conexion = null;
 		PreparedStatement ps = null;
 		int inserciones = 0;
@@ -40,15 +40,15 @@ public class AccesoPrestamo {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 
-			String query = "INSERT INTO prestamo VALUES (?, ?, ?, ?, ?, ?);";
+			String query = "INSERT INTO prestamo "
+					+ "(codigo_libro, codigo_socio, fecha_inicio, fecha_fin) "
+					+ "VALUES (?, ?, ?, ?);";
 
 			ps = conexion.prepareStatement(query);
-			ps.setInt(1, codigo);
-			ps.setString(2, isbn);
-			ps.setString(3, titulo);
-			ps.setString(4, escritor);
-			ps.setInt(5, publicacion);
-			ps.setDouble(6, puntuacion);
+			ps.setInt(1, codigoLibro);
+			ps.setInt(2, codigoSocio);
+			ps.setString(3, fechaInicio);
+			ps.setString(4, fechaFin);
 
 			inserciones = ps.executeUpdate();
 		} catch (SQLException e) {
@@ -66,7 +66,9 @@ public class AccesoPrestamo {
 	}
 
 	/**
-	 * Modificar la fecha de devolución de un préstamo identificado por código de libro y código de socio
+	 * Modificar la fecha de devolución de un préstamo identificado por código de
+	 * libro y código de socio
+	 * 
 	 * @param fechaDevolucion
 	 * @param codigoLibro
 	 * @param codigoSocio
@@ -74,8 +76,7 @@ public class AccesoPrestamo {
 	 * @throws BDException
 	 * @throws SQLException
 	 */
-	public static boolean modificarPrestamo(String fechaDevolucion, int codigoLibro, int codigoSocio,
-			String fechaInicio) throws BDException, SQLException {
+	public static boolean modificarPrestamo(String fechaDevolucion, int codigoLibro, int codigoSocio, String fechaInicio) throws BDException, SQLException {
 		PreparedStatement ps = null;
 		Connection conexion = null;
 		int modificaciones = 0;
@@ -87,7 +88,7 @@ public class AccesoPrestamo {
 				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
 			}
 
-			String query = "UPDATE prestamo SET fecha_devolucion = ? " + "WHERE codigo_libro = ? AND codigo_socio = ? "
+			String query = "UPDATE prestamo SET fecha_devolucion = ? WHERE codigo_libro = ? AND codigo_socio = ? "
 					+ "AND fecha_inicio = ? ;";
 
 			ps = conexion.prepareStatement(query);
@@ -113,6 +114,7 @@ public class AccesoPrestamo {
 
 	/**
 	 * Eliminar un préstamo de la base de datos
+	 * 
 	 * @param codigoLibro
 	 * @param codigoSocio
 	 * @param fechaInicio
@@ -120,8 +122,7 @@ public class AccesoPrestamo {
 	 * @throws BDException
 	 * @throws SQLException
 	 */
-	public static boolean eliminarPrestamo(int codigoLibro, int codigoSocio, String fechaInicio)
-			throws BDException, SQLException {
+	public static boolean eliminarPrestamo(int codigoLibro, int codigoSocio, String fechaInicio) throws BDException, SQLException {
 		PreparedStatement ps = null;
 		Connection conexion = null;
 		int modificaciones = 0;
@@ -159,6 +160,7 @@ public class AccesoPrestamo {
 
 	/**
 	 * Consultar todos los préstamos de la base de datos
+	 * 
 	 * @return
 	 * @throws BDException
 	 * @throws SQLException
@@ -214,6 +216,7 @@ public class AccesoPrestamo {
 
 	/**
 	 * Consultar los préstamos no devueltos de la base de datos
+	 * 
 	 * @return
 	 * @throws BDException
 	 * @throws SQLException
@@ -257,12 +260,70 @@ public class AccesoPrestamo {
 		}
 		return prestamos;
 	}
-	
-	/*
-	 * TODO Consultar DNI y nombre de socio, 
-	 * ISBN y título de libro 
-	 * y fecha de devolución de los préstamos 
-	 * realizados en una fecha de la base de datos.
+
+	/**
+	 * Consultar DNI, nombre de socio, ISBN, título de libro
+	 * y fecha de devolución de los préstamos realizados en 
+	 * una fecha dada
+	 * @param fechaInicio
+	 * @return
+	 * @throws BDException
 	 */
-	// public static ArrayList<Libro> consultar
+	public static String consultarDatosFecha(String fechaInicio) throws BDException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		
+		String devolver = "";
+
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT socio.dni as dni, socio.nombre as nombre, "
+					+ "libro.isbn as isbn, libro.titulo as titulo, fecha_devolucion, fecha_inicio "
+					+ "FROM prestamo JOIN socio ON(codigo_socio = socio.codigo) "
+					+ "JOIN libro ON(codigo_libro = libro.codigo) "
+					+ "WHERE fecha_inicio = ?;";
+
+			ps = conexion.prepareStatement(query);
+			ps.setString(1, fechaInicio);
+
+			ResultSet resultados = ps.executeQuery();
+			
+			// TODO quitar fecha inicio del resultado de la consulta
+			int contador = 0;
+			while (resultados.next()) {
+				String dni = resultados.getString("dni");
+				String nombre = resultados.getString("nombre");
+				String isbn = resultados.getString("isbn");
+				String titulo = resultados.getString("titulo");
+				String fechaDevolucion = resultados.getString("fecha_devolucion");
+				String fInicio = resultados.getString("fecha_inicio");
+				
+				devolver += "Préstamo [DNI: " + dni + ", Nombre de socio: " + nombre + ", "
+						+ "ISBN: " + isbn + ", Título: " + titulo + ", Fecha de devolución: " + fechaDevolucion
+						+ "Fecha de inicio: " + fInicio + "]\n";
+				
+				contador++;
+			}
+			devolver += "Se han consultado " + contador + " registros";
+		} catch (SQLException e) {
+			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		if (devolver.equals("")) {
+			return null;
+		}
+		return devolver;
+	}
 }
