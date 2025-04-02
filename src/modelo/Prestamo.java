@@ -17,7 +17,8 @@ public class Prestamo {
 		this.fechaFin = fechaFin;
 		this.fechaDevolucion = fechaDevolucion;
 	}
-
+	
+	//Sin fecha de devolucion
 	public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin) {
 		super();
 		this.libro = libro;

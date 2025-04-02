@@ -6,20 +6,7 @@ import config.ConfigSQLite;
 import excepciones.BDException;
 import modelo.Libro;
 
-public class AccesoLibro {
-	public static void main(String[] args) {
-		try {
-			System.out.println(eliminarLibro(3));
-			System.out.println(eliminarLibro(4));
-//			System.out.println(insertarLibro("ISBN2", "Libro2", "Escritor2", 1989, 4.5));
-			System.out.println(consultarLibros());
-		} catch (BDException e) {
-			System.err.println(e.getMessage());
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-		}
-	}
-	
+public class AccesoLibro {	
 	/**
 	 * Insertar un libro en la base de datos.
 	 * 
