@@ -33,7 +33,7 @@ public class AccesoPrestamo {
 			double puntuacion) throws BDException, SQLException {
 
 		Connection conexion = ConfigSQLite.abrirConexion();
-		String query = "INSERT INTO prestamo VALUES ('?', '?', '?', '?', '?', '?')";
+		String query = "INSERT INTO prestamo VALUES (?, ?, ?, ?, ?, ?)";
 
 		PreparedStatement ps = conexion.prepareStatement(query);
 		ps.setInt(1, codigo);
@@ -58,16 +58,15 @@ public class AccesoPrestamo {
 	 * @throws BDException
 	 * @throws SQLException
 	 */
-	public static boolean modificarPrestamo(String fechaDevolucion, int codigoLibro, int codigoSocio,
-			String fechaInicio) throws BDException, SQLException {
+	public static boolean modificarPrestamo(String fechaDevolucion, int codigoLibro, int codigoSocio,String fechaInicio) throws BDException, SQLException {
 		PreparedStatement ps = null;
 		Connection conexion = null;
 		int modificaciones = 0;
 
 		conexion = ConfigSQLite.abrirConexion();
 
-		String query = "UPDATE prestamo SET fecha_devolucion = '?' "
-				+ "WHERE codigo_libro = '?' AND codigo_socio = '?' " + "AND fecha_inicio = '?' ;";
+		String query = "UPDATE prestamo SET fecha_devolucion = ? "
+				+ "WHERE codigo_libro = ? AND codigo_socio = ? " + "AND fecha_inicio = ? ;";
 
 		ps = conexion.prepareStatement(query);
 		ps.setString(1, fechaDevolucion);
@@ -90,12 +89,11 @@ public class AccesoPrestamo {
 	 * @throws BDException
 	 * @throws SQLException
 	 */
-	public static boolean eliminarPrestamo(int codigoLibro, int codigoSocio, String fechaInicio)
-			throws BDException, SQLException {
+	public static boolean eliminarPrestamo(int codigoLibro, int codigoSocio, String fechaInicio) throws BDException, SQLException {
 		Connection conexion = ConfigSQLite.abrirConexion();
 
-		String query = "DELETE FROM prestamo WHERE codigo_libro = '?' "
-				+ "AND codigo_socio = '?' AND fecha_inicio = '?';";
+		String query = "DELETE FROM prestamo WHERE codigo_libro = ? "
+				+ "AND codigo_socio = ? AND fecha_inicio = ?;";
 
 		PreparedStatement ps = conexion.prepareStatement(query);
 		ps.setInt(1, codigoLibro);
