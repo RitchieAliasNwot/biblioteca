@@ -375,7 +375,13 @@ public class AccesoPrestamo {
 		return prestado;
 	}
 	
-	// Comprueba si el socio tiene un libro prestado sin devolver
+	/**
+	 * Comprueba si el socio tiene un libro prestado sin devolver
+	 * @param codigoSocio
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
 	public static boolean socioEndeudado(int codigoSocio) throws BDException, SQLException {
 		Connection conexion = null;
 		PreparedStatement ps = null;

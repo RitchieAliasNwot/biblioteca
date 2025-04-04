@@ -142,11 +142,13 @@ public class AccesoSocio {
 		return socios;
 	}
 	
-	// Consultar varios 
-	//	socios, por localidad, de la base de datos,
-	//	ordenados por nombre
-	//	ascendente.
-	
+	/**
+	 * Consultar socios, por localidad
+	 * ordenados por nombre ascendente
+	 * @param domicilio
+	 * @return
+	 * @throws BDException
+	 */
 	public static ArrayList<Socio> consultarLocalidad(String domicilio) throws BDException {
 		ArrayList<Socio> socios = new ArrayList<Socio>();
 		PreparedStatement ps = null;
@@ -190,6 +192,11 @@ public class AccesoSocio {
 		return socios;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 * @throws BDException
+	 */
 	public static ArrayList<Socio> consultarSinPrestamos() throws BDException {
 		ArrayList<Socio> socios = new ArrayList<Socio>();
 		PreparedStatement ps = null;
@@ -239,6 +246,12 @@ public class AccesoSocio {
 		return socios;
 	}
 	
+	/**
+	 * 
+	 * @param fechaInicio
+	 * @return
+	 * @throws BDException
+	 */
 	public static ArrayList<Socio> consultarPorFecha(String fechaInicio) throws BDException {
 		ArrayList<Socio> socios = new ArrayList<Socio>();
 		PreparedStatement ps = null;

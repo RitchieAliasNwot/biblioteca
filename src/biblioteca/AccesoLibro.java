@@ -239,7 +239,7 @@ public class AccesoLibro {
 	 * @return
 	 * @throws BDException
 	 */
-	public static ArrayList<Libro> consultarLibrosDevueltos(String fechaDevolucion) throws BDException {
+	public static ArrayList<Libro> librosFechaDevolucion(String fechaDevolucion) throws BDException {
 		ArrayList<Libro> listaLibros = new ArrayList<Libro>();
 		PreparedStatement ps = null;
 		Connection conexion = null;
@@ -279,5 +279,43 @@ public class AccesoLibro {
 			}
 		}
 		return listaLibros;
+	}
+	
+	// MENSAJES DE ERROR
+	
+	public static boolean referenciado(int codigoLibro) throws BDException, SQLException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		boolean referenciado = false;
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT codigo_libro FROM prestamo "
+					+ "WHERE fecha_devolucion IS NULL "
+					+ "AND codigo_libro = ?;";
+			
+			ps = conexion.prepareStatement(query);
+			ps.setInt(1, codigoLibro);
+			
+			ResultSet resultados = ps.executeQuery();
+			
+			if (resultados.next()) {
+				referenciado = true;
+			}
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return referenciado;
 	}
 }
