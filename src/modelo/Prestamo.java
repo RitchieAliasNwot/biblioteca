@@ -10,7 +10,6 @@ public class Prestamo {
 	private String fechaDevolucion;
 
 	public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin, String fechaDevolucion) {
-		super();
 		this.libro = libro;
 		this.socio = socio;
 		this.fechaInicio = fechaInicio;
@@ -20,7 +19,6 @@ public class Prestamo {
 	
 	//Sin fecha de devolucion
 	public Prestamo(Libro libro, Socio socio, String fechaInicio, String fechaFin) {
-		super();
 		this.libro = libro;
 		this.socio = socio;
 		this.fechaInicio = fechaInicio;

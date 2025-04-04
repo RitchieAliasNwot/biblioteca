@@ -3,10 +3,42 @@ package biblioteca;
 import java.sql.*;
 import java.util.ArrayList;
 import config.ConfigSQLite;
+import entrada.Teclado;
 import excepciones.BDException;
 import modelo.Libro;
 
 public class AccesoLibro {	
+	
+	public static void main(String[] args) {
+		boolean insertado = false;
+		boolean eliminado = false;
+		
+		try {
+//			eliminado = eliminarLibro(5);
+//			System.out.println(eliminado);
+//			eliminado = false;
+			
+//			eliminado = eliminarLibro(6);
+//			System.out.println(eliminado);
+//			eliminado = false;
+			
+			insertado = insertarLibro("ISBN3", "Titulo", "Escritor", 2004, 4);
+			System.out.println(insertado);
+			
+			insertado = false;
+			
+			System.out.println(consultarLibros());
+			
+		} catch (BDException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	/**
 	 * 
 	 * @param isbn

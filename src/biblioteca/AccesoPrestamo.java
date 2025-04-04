@@ -326,4 +326,88 @@ public class AccesoPrestamo {
 		}
 		return devolver;
 	}
+	
+	//====================
+	/**
+	 * Comprueba si un libro se ha tomado prestado y no se ha devuleto
+	 * Si sigue estando prestado (no se ha devuleto), devuelve TRUE
+	 * @param codigoLibro
+	 * @param codigoSocio
+	 * @return
+	 * @throws BDException
+	 */
+	public static boolean libroPrestado(int codigoLibro) throws BDException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		boolean prestado = false;
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT codigo_libro "
+					+ "FROM prestamo WHERE codigo_libro = ? "
+					+ "AND fecha_deolucion IS NULL;";
+			
+			ps = conexion.prepareStatement(query);
+			ps.setInt(1, codigoLibro);
+
+			ResultSet resultados = ps.executeQuery();
+			
+			if (resultados.next()) {
+				prestado = true;
+			}
+		} catch (SQLException e) {
+			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return prestado;
+	}
+	
+	// Comprueba si el socio tiene un libro prestado sin devolver
+	public static boolean socioEndeudado(int codigoSocio) throws BDException, SQLException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		boolean endeudado = false;
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT codigo_socio FROM prestamo "
+					+ "WHERE codigo_socio = ? "
+					+ "AND fecha_devolucion IS NULL;";
+			
+			ps = conexion.prepareStatement(query);
+			ps.setInt(1, codigoSocio);
+
+			ResultSet resultados = ps.executeQuery();
+			
+			if (resultados.next()) {
+				endeudado = true;
+			}
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return endeudado;
+	}
 }
