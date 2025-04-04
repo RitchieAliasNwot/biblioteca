@@ -3,11 +3,11 @@ package biblioteca;
 import java.sql.*;
 import java.util.ArrayList;
 import config.ConfigSQLite;
-import entrada.Teclado;
 import excepciones.BDException;
 import modelo.Libro;
 
-public class AccesoLibro {		
+public class AccesoLibro {
+	
 	/**
 	 * 
 	 * @param isbn
@@ -23,7 +23,7 @@ public class AccesoLibro {
 		PreparedStatement ps = null;
 		Connection conexion = null;
 		int inserciones = 0;
-
+		
 		try {
 			conexion = ConfigSQLite.abrirConexion();
 			// No se ha podido abrir la conexión
@@ -282,8 +282,15 @@ public class AccesoLibro {
 	}
 	
 	// MENSAJES DE ERROR
-	
-	public static boolean referenciado(int codigoLibro) throws BDException, SQLException {
+	/**
+	 * Comprueba si el código de libro está
+	 * en un préstamo no devuelto
+	 * @param codigoLibro
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
+	public static boolean referenciado(int codigo) throws BDException, SQLException {
 		Connection conexion = null;
 		PreparedStatement ps = null;
 		boolean referenciado = false;
@@ -300,7 +307,7 @@ public class AccesoLibro {
 					+ "AND codigo_libro = ?;";
 			
 			ps = conexion.prepareStatement(query);
-			ps.setInt(1, codigoLibro);
+			ps.setInt(1, codigo);
 			
 			ResultSet resultados = ps.executeQuery();
 			

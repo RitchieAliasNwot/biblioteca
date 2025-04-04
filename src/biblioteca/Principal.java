@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import entrada.Teclado;
 import excepciones.BDException;
 import modelo.Libro;
+import modelo.Socio;
 
 public class Principal {
 
@@ -56,7 +57,7 @@ public class Principal {
 			System.out.println();
 
 			try {
-				if (opcion == 1) { // Insertar libro
+				if (opcion == 1) {
 					String isbn = Teclado.leerCadena("¿ISBN? ");
 					String titulo = Teclado.leerCadena("¿Título? ");
 					String escritor = Teclado.leerCadena("¿Escritor? ");
@@ -64,10 +65,9 @@ public class Principal {
 					double puntuacion = Teclado.leerReal("¿Puntuación? ");
 
 					if (AccesoLibro.insertarLibro(isbn, titulo, escritor, publicacion, puntuacion)) {
-						System.out.println("Se ha insertado el libro en la base de datos.");
+						System.out.println("Se ha insertado un libro en la base de datos.");	
 					}
-
-				} else if (opcion == 2) { // Eliminar libro
+				} else if (opcion == 2) {
 					int codigo = Teclado.leerEntero("¿Código del libro a eliminar? ");
 
 					if (AccesoLibro.referenciado(codigo)) {
@@ -77,10 +77,9 @@ public class Principal {
 					} else {
 						System.out.println("No existe ningún libro con ese código en la base de datos.");
 					}
-
 				} else if (opcion == 3) {
 					ArrayList<Libro> libros = AccesoLibro.consultarLibros();
-					
+
 					if (libros.size() == 0) {
 						System.err.println("No se ha encontrado ningún libro en la base de datos.");
 					} else {
@@ -92,7 +91,7 @@ public class Principal {
 				} else if (opcion == 4) {
 					String escritor = Teclado.leerCadena("¿Escritor? ");
 					ArrayList<Libro> libros = AccesoLibro.consultarLibrosPorEscritor(escritor);
-					
+
 					if (libros.size() == 0) {
 						System.err.println("No existe ningún libro con ese escritor en la base de datos.");
 					} else {
@@ -103,7 +102,7 @@ public class Principal {
 					}
 				} else if (opcion == 5) {
 					ArrayList<Libro> libros = AccesoLibro.consultarLibrosNoPrestados();
-					
+
 					if (libros.size() == 0) {
 						System.err.println("No existe ningún libro no prestado en la base de datos.");
 					} else {
@@ -115,7 +114,7 @@ public class Principal {
 				} else if (opcion == 6) {
 					String devolucion = Teclado.leerCadena("¿Fecha de devolución? ");
 					ArrayList<Libro> libros = AccesoLibro.librosFechaDevolucion(devolucion);
-					
+
 					if (libros.size() == 0) {
 						System.err.println("No existe ningún libro devuleto en esa fecha en la base de datos.");
 					} else {
@@ -152,27 +151,80 @@ public class Principal {
 			opcion = Teclado.leerEntero("¿Opción? ");
 			System.out.println();
 			
-//			try {
+			try {
 				if (opcion == 1) {
+					String dni = Teclado.leerCadena("¿DNI? ");
+					String nombre = Teclado.leerCadena("¿Nombre? ");
+					String domilicio = Teclado.leerCadena("¿Teléfono? ");
+					String correo = Teclado.leerCadena("¿Correo? ");
 					
+					if (AccesoSocio.insertarSocio(dni, nombre, nombre, domilicio, correo)) {	
+						System.out.println("Se ha insertado un socio en la base de datos");
+					}
 				} else if (opcion == 2) {
-					
+					int codigo = Teclado.leerEntero("¿Código del socio a eliminar? ");
+
+					if (AccesoSocio.referenciado(codigo)) {
+						System.err.println("El socio está referenciado en un préstamo de la base de datos.");
+					} else if (AccesoLibro.eliminarLibro(codigo)) {
+						System.out.println("Se ha eliminado un socio de la base de datos.");
+					} else {
+						System.out.println("No existe ningún socio con ese código en la base de datos.");
+					}
 				} else if (opcion == 3) {
-					
+					ArrayList<Socio> socios = AccesoSocio.consultarSocios();
+
+					if (socios.size() == 0) {
+						System.err.println("No se ha encontrado ningún socio en la base de datos.");
+					} else {
+						for (Socio socio : socios) {
+							System.out.println(socio.toString());
+						}
+						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
+					}
 				} else if (opcion == 4) {
-					
+					String localidad = Teclado.leerCadena("¿Localidad? ");
+					ArrayList<Socio> socios = AccesoSocio.consultarLocalidad(localidad);
+
+					if (socios.size() == 0) {
+						System.err.println("No existe ningún socio con esa localidad en la base de datos.");
+					} else {
+						for (Socio socio : socios) {
+							System.out.println(socio.toString());
+						}
+						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
+					}
 				} else if (opcion == 5) {
+					ArrayList<Socio> socios = AccesoSocio.consultarSinPrestamos();
 					
+					if (socios.size() == 0) {
+						System.err.println("No existe ningún socio sin préstamos en la base de datos.");
+					} else {
+						for (Socio socio : socios) {
+							System.out.println(socio.toString());
+						}
+						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
+					}
 				} else if (opcion == 6) {
+					String fecha = Teclado.leerCadena("¿Fecha de inicio? ");
+					ArrayList<Socio> socios = AccesoSocio.consultarPorFecha(fecha);
 					
+					if (socios.size() == 0) {
+						System.err.println("No existe ningún socio con préstamos en esa fecha en la base de datos.");
+					} else {
+						for (Socio socio : socios) {
+							System.out.println(socio.toString());
+						}
+						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
+					}
 				} else if (opcion != 0) {
 					System.err.println("La opción debe estar comprendida entre 0 y 6");
 				}
-//			} catch (BDException e) {
-//				System.err.println(e.getMessage());
-//			} catch (SQLException sqle) {
-//				System.err.println(sqle.getMessage());
-//			}
+			} catch (BDException e) {
+				System.err.println(e.getMessage());
+			} catch (SQLException sqle) {
+				System.err.println(sqle.getMessage());
+			}
 		} while (opcion != 0);
 	}
 
@@ -201,7 +253,7 @@ public class Principal {
 				String fechaFin = Teclado.leerCadena("¿Fecha fin? ");
 
 				try {
-					if (AccesoPrestamo.libroPrestado(codigoLibro)) {
+					if (AccesoPrestamo.prestado(codigoLibro)) {
 						System.err.println("Se ha prestado ese libro a un socio y éste aún no lo ha devuelto.");
 					} else if (AccesoPrestamo.socioEndeudado(codigoSocio)) {
 						System.err.println("Se ha prestado un libro a ese socio y éste aún no lo ha devuelto.");

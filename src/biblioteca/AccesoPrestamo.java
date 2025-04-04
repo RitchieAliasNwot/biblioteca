@@ -326,9 +326,7 @@ public class AccesoPrestamo {
 		return devolver;
 	}
 	
-	/////////////////////////////////
-	// 		MENSAJES DE ERROR	   //
-	/////////////////////////////////
+	// MENSAJES DE ERROR
 	/**
 	 * Comprueba si un libro se ha tomado prestado y no se ha devuleto
 	 * Si sigue estando prestado (no se ha devuleto), devuelve TRUE
@@ -337,7 +335,7 @@ public class AccesoPrestamo {
 	 * @return
 	 * @throws BDException
 	 */
-	public static boolean libroPrestado(int codigoLibro) throws BDException {
+	public static boolean prestado(int codigoLibro) throws BDException {
 		Connection conexion = null;
 		PreparedStatement ps = null;
 		boolean prestado = false;

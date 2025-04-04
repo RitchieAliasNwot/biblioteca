@@ -22,10 +22,11 @@ public class AccesoSocio {
 	 * @param correo
 	 * @throws BDException
 	 */
-	public static void insertarSocio(String dni, String nombre, String domicilio, String telefono, String correo) throws BDException {
+	public static boolean insertarSocio(String dni, String nombre, String domicilio, String telefono, String correo) throws BDException {
 		PreparedStatement ps = null;
 		Connection conexion = null;
-
+		int inserciones = 0;
+		
 		try {
 			conexion = ConfigSQLite.abrirConexion();
 			// No se ha podido abrir la conexión
@@ -43,7 +44,7 @@ public class AccesoSocio {
 			ps.setString(4, telefono);
 			ps.setString(5, correo);
 
-			ps.executeUpdate();
+			inserciones = ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new BDException(BDException.ERROR_QUERY + e.getMessage());
 		} finally {
@@ -55,10 +56,11 @@ public class AccesoSocio {
 				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
 			}
 		}
+		return inserciones > 0;
 	}
 	
 	/**
-	 * 
+	 * Eliminar un socio por código
 	 * @param codigo
 	 * @return
 	 * @throws BDException
@@ -97,7 +99,7 @@ public class AccesoSocio {
 	}
 	
 	/**
-	 * 
+	 * Consultar todos los socios
 	 * @return
 	 * @throws BDException
 	 */
@@ -193,7 +195,7 @@ public class AccesoSocio {
 	}
 	
 	/**
-	 * 
+	 * Consultar los socios sin préstamos
 	 * @return
 	 * @throws BDException
 	 */
@@ -247,7 +249,7 @@ public class AccesoSocio {
 	}
 	
 	/**
-	 * 
+	 * Consultar los socios con préstamo en una fecha
 	 * @param fechaInicio
 	 * @return
 	 * @throws BDException
@@ -296,5 +298,42 @@ public class AccesoSocio {
 			}
 		}
 		return socios;
+	}
+	
+	// MENSAJES DE ERROR
+	public static boolean referenciado(int codigo) throws BDException, SQLException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		boolean referenciado = false;
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT codigo_socio FROM prestamo "
+					+ "WHERE fecha_devolucion IS NULL "
+					+ "AND codigo_socio = ?;";
+			
+			ps = conexion.prepareStatement(query);
+			ps.setInt(1, codigo);
+			
+			ResultSet resultados = ps.executeQuery();
+			
+			if (resultados.next()) {
+				referenciado = true;
+			}
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return referenciado;
 	}
 }
