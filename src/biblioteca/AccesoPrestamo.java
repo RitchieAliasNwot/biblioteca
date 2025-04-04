@@ -283,7 +283,7 @@ public class AccesoPrestamo {
 			}
 
 			String query = "SELECT socio.dni as dni, socio.nombre as nombre, "
-					+ "libro.isbn as isbn, libro.titulo as titulo, fecha_devolucion, fecha_inicio "
+					+ "libro.isbn as isbn, libro.titulo as titulo, fecha_devolucion "
 					+ "FROM prestamo JOIN socio ON(codigo_socio = socio.codigo) "
 					+ "JOIN libro ON(codigo_libro = libro.codigo) "
 					+ "WHERE fecha_inicio = ?;";
@@ -301,11 +301,10 @@ public class AccesoPrestamo {
 				String isbn = resultados.getString("isbn");
 				String titulo = resultados.getString("titulo");
 				String fechaDevolucion = resultados.getString("fecha_devolucion");
-				String fInicio = resultados.getString("fecha_inicio");
 				
 				devolver += "Préstamo [DNI: " + dni + ", Nombre de socio: " + nombre + ", "
-						+ "ISBN: " + isbn + ", Título: " + titulo + ", Fecha de devolución: " + fechaDevolucion
-						+ "Fecha de inicio: " + fInicio + "]\n";
+						+ "ISBN: " + isbn + ", Título: " + titulo +
+						", Fecha de devolución: " + fechaDevolucion + "]\n";
 				
 				contador++;
 			}
@@ -327,7 +326,9 @@ public class AccesoPrestamo {
 		return devolver;
 	}
 	
-	//====================
+	/////////////////////////////////
+	// 		MENSAJES DE ERROR	   //
+	/////////////////////////////////
 	/**
 	 * Comprueba si un libro se ha tomado prestado y no se ha devuleto
 	 * Si sigue estando prestado (no se ha devuleto), devuelve TRUE
