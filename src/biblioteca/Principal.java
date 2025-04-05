@@ -39,7 +39,7 @@ public class Principal {
 			}
 		} while (opcion != 0);
 	}
-
+	
 	private static void menuLibros() {
 		int opcion = 0;
 
@@ -80,50 +80,18 @@ public class Principal {
 					}
 				} else if (opcion == 3) {
 					ArrayList<Libro> libros = AccesoLibro.consultarLibros();
-
-					if (libros.size() == 0) {
-						System.err.println("No se ha encontrado ningún libro en la base de datos.");
-					} else {
-						for (Libro libro : libros) {
-							System.out.print(libro.toString());
-						}
-						System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
-					}
+					mostrarLibros(libros);
 				} else if (opcion == 4) {
 					String escritor = Teclado.leerCadena("¿Escritor? ");
 					ArrayList<Libro> libros = AccesoLibro.consultarLibrosPorEscritor(escritor);
-
-					if (libros.size() == 0) {
-						System.err.println("No existe ningún libro con ese escritor en la base de datos.");
-					} else {
-						for (Libro libro : libros) {
-							System.out.print(libro.toString());
-						}
-						System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
-					}
+					mostrarLibros(libros);
 				} else if (opcion == 5) {
 					ArrayList<Libro> libros = AccesoLibro.consultarLibrosNoPrestados();
-
-					if (libros.size() == 0) {
-						System.err.println("No existe ningún libro no prestado en la base de datos.");
-					} else {
-						for (Libro libro : libros) {
-							System.out.print(libro.toString());
-						}
-						System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
-					}
+					mostrarLibros(libros);
 				} else if (opcion == 6) {
 					String devolucion = Teclado.leerCadena("¿Fecha de devolución? ");
 					ArrayList<Libro> libros = AccesoLibro.librosFechaDevolucion(devolucion);
-
-					if (libros.size() == 0) {
-						System.err.println("No existe ningún libro devuleto en esa fecha en la base de datos.");
-					} else {
-						for (Libro libro : libros) {
-							System.out.print(libro.toString());
-						}
-						System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
-					}
+					mostrarLibros(libros);
 				} else if (opcion != 0) {
 					System.err.println("La opción debe estar comprendida entre 0 y 6");
 				}
@@ -174,50 +142,18 @@ public class Principal {
 					}
 				} else if (opcion == 3) {
 					ArrayList<Socio> socios = AccesoSocio.consultarSocios();
-
-					if (socios.size() == 0) {
-						System.err.println("No se ha encontrado ningún socio en la base de datos.");
-					} else {
-						for (Socio socio : socios) {
-							System.out.print(socio.toString());
-						}
-						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
-					}
+					mostrarSocios(socios);
 				} else if (opcion == 4) {
 					String localidad = Teclado.leerCadena("¿Localidad? ");
 					ArrayList<Socio> socios = AccesoSocio.consultarLocalidad(localidad);
-
-					if (socios.size() == 0) {
-						System.err.println("No existe ningún socio con esa localidad en la base de datos.");
-					} else {
-						for (Socio socio : socios) {
-							System.out.print(socio.toString());
-						}
-						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
-					}
+					mostrarSocios(socios);
 				} else if (opcion == 5) {
 					ArrayList<Socio> socios = AccesoSocio.consultarSinPrestamos();
-
-					if (socios.size() == 0) {
-						System.err.println("No existe ningún socio sin préstamos en la base de datos.");
-					} else {
-						for (Socio socio : socios) {
-							System.out.print(socio.toString());
-						}
-						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
-					}
+					mostrarSocios(socios);
 				} else if (opcion == 6) {
 					String fecha = Teclado.leerCadena("¿Fecha de inicio? ");
 					ArrayList<Socio> socios = AccesoSocio.consultarPorFecha(fecha);
-
-					if (socios.size() == 0) {
-						System.err.println("No existe ningún socio con préstamos en esa fecha en la base de datos.");
-					} else {
-						for (Socio socio : socios) {
-							System.out.print(socio.toString());
-						}
-						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
-					}
+					mostrarSocios(socios);
 				} else if (opcion != 0) {
 					System.err.println("La opción debe estar comprendida entre 0 y 6");
 				}
@@ -331,40 +267,94 @@ public class Principal {
 			System.out.println("\n0) Salir del submenú");
 			System.out.println("1) Consultar el libros que ha sido prestados menos veces (mínimo 1)");
 			System.out.println("2) Consultar el socio que ha realizado más préstamos");
-			System.out.println(
-					"3) Consultar los libros que han sido prestados una cantidad de veces inferior a la media");
-			System.out
-					.println("4) Consultar los socios que han realizado una cantidad de préstamos superior a la media");
-			System.out.println(
-					"5) Consultar el ISBN, título y nº de veces prestados de los libros, ordenados por el nº de préstamo descendente");
-			System.out.println(
-					"6) Consultar el DNI, nombre y nº de préstamos realizados, ordenados por el nº de préstamo descente");
+			System.out.println("3) Consultar los libros que han sido prestados una cantidad de veces inferior a la media");
+			System.out.println("4) Consultar los socios que han realizado una cantidad de préstamos superior a la media");
+			System.out.println("5) Consultar el ISBN, título y nº de veces prestados de los libros, ordenados por el nº de préstamo descendente");
+			System.out.println("6) Consultar el DNI, nombre y nº de préstamos realizados, ordenados por el nº de préstamo descente");
 
 			// Escoger opción
 			opcion = Teclado.leerEntero("¿Opción? ");
 			System.out.println();
 
-//			try {
+			try {
 			if (opcion == 1) {
-
+				ArrayList<Libro> libros = AccesoLibro.menosPrestados();
+				
+				if (libros.size() == 0) {
+					System.err.println("No existe ningún libro en la base de datos.");
+				} else {
+					for (Libro libro : libros) {
+						System.out.println(libro.toString());
+					}
+					System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
+				}
 			} else if (opcion == 2) {
-
+				ArrayList<Socio> socios = AccesoSocio.masPrestamos();
+				
+				if (socios.size() == 0) {
+					System.err.println("No existe ningún socio en la base de datos");
+				} else {
+					for (Socio socio : socios) {
+						System.out.println(socio.toString());
+					}
+					System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
+				}
 			} else if (opcion == 3) {
-
+				ArrayList<Libro> libros = AccesoLibro.prestadosMenosMedia();
+				
+				if (libros.size() == 0) {
+					System.err.println("No existe ningún libro en la base de datos.");
+				} else {
+					for (Libro libro : libros) {
+						System.out.println(libro.toString());
+					}
+					System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
+				}
 			} else if (opcion == 4) {
-
+				ArrayList<Socio> socios = AccesoSocio.prestamosSuperiorMedia();
+				
+				if (socios.size() == 0) {
+					System.err.println("No existe ningún socio en la base de datos");
+				} else {
+					for (Socio socio : socios) {
+						System.out.println(socio.toString());
+					}
+					System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
+				}
 			} else if (opcion == 5) {
-
+				
 			} else if (opcion == 6) {
-
+				
 			} else if (opcion != 0) {
 				System.err.println("La opción debe estar comprendida entre 0 y 6");
 			}
-//			} catch (BDException e) {
-//				System.err.println(e.getMessage());
-//			} catch (SQLException sqle) {
-//				System.err.println(sqle.getMessage());
-//			}
+			} catch (BDException e) {
+				System.err.println(e.getMessage());
+			} catch (SQLException sqle) {
+				System.err.println(sqle.getMessage());
+			}
 		} while (opcion != 0);
 	}
+	
+	public static void mostrarLibros(ArrayList<Libro> libros) {
+		if (libros.size() == 0) {
+			System.err.println("No se ha encontrado ningún libro en la base de datos.");
+		} else {
+			for (Libro libro : libros) {
+				System.out.print(libro.toString());
+			}
+			System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
+		}
+	}
+	
+	public static void mostrarSocios(ArrayList<Socio> socios) {
+		if (socios.size() == 0) {
+			System.err.println("No se ha encontrado ningún socio en la base de datos.");
+		} else {
+			for (Socio socio : socios) {
+				System.out.print(socio.toString());
+			}
+			System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
+		}
+	}	
 }

@@ -327,6 +327,7 @@ public class AccesoPrestamo {
 	}
 	
 	// MENSAJES DE ERROR
+	
 	/**
 	 * Comprueba si un libro se ha tomado prestado y no se ha devuleto
 	 * Si sigue estando prestado (no se ha devuleto), devuelve TRUE

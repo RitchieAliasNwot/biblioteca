@@ -301,6 +301,14 @@ public class AccesoSocio {
 	}
 	
 	// MENSAJES DE ERROR
+	
+	/**
+	 * 
+	 * @param codigo
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
 	public static boolean referenciado(int codigo) throws BDException, SQLException {
 		Connection conexion = null;
 		PreparedStatement ps = null;
@@ -335,5 +343,119 @@ public class AccesoSocio {
 			}
 		}
 		return referenciado;
+	}
+	
+	// CONSULTAS AVANZADAS
+	
+	/**
+	 * Consultar socio(s) con más préstamos
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
+	public static ArrayList<Socio> masPrestamos() throws BDException, SQLException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		ArrayList<Socio> socios = new ArrayList<Socio>();
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT s.*, COUNT(p.codigo_socio) AS total_prestamos "
+					+ "FROM socio s JOIN prestamo p ON s.codigo = p.codigo_socio "
+					+ "GROUP BY s.codigo HAVING COUNT(p.codigo_socio) = ("
+					+ 	"SELECT MAX(conteo) "
+					+ 	"FROM ("
+					+		"SELECT COUNT(p2.codigo_socio) AS conteo "
+					+ 		"FROM prestamo p2 "
+					+ 		"GROUP BY p2.codigo_libro"
+					+	")"
+					+ ");";
+			
+			ps = conexion.prepareStatement(query);
+			
+			ResultSet resultados = ps.executeQuery();
+			
+			while (resultados.next()) {
+				int codigo = resultados.getInt("codigo");
+				String dni = resultados.getString("dni");
+				String nombre = resultados.getString("nombre");
+				String domicilio = resultados.getString("domicilio");
+				String telefono = resultados.getString("telefono");
+				String correo = resultados.getString("correo");
+				
+				socios.add(new Socio(codigo, dni, nombre, domicilio, telefono, correo));
+			}
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return socios;
+	}
+	/**
+	 * Consultar los socios que han realizado una
+	 * cantidad de préstamos superior a la media
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
+	public static ArrayList<Socio> prestamosSuperiorMedia() throws BDException, SQLException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		ArrayList<Socio> socios = new ArrayList<Socio>();
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT s.*, COUNT(p.codigo_socio) AS total_prestamos "
+					+ "FROM socio s "
+					+ "JOIN prestamo p ON s.codigo = p.codigo_socio "
+					+ "GROUP BY s.codigo "
+					+ "HAVING COUNT(p.codigo_socio) > ("
+					+ 	"SELECT AVG(conteo) "
+					+ 	"FROM ("
+					+ 		"SELECT COUNT(p2.codigo_socio) AS conteo "
+					+ 		"FROM prestamo p2 "
+					+ 		"GROUP BY p2.codigo_socio"
+					+ 	")"
+					+ ");";
+			
+			ps = conexion.prepareStatement(query);
+			
+			ResultSet resultados = ps.executeQuery();
+			
+			while (resultados.next()) {
+				int codigo = resultados.getInt("codigo");
+				String dni = resultados.getString("dni");
+				String nombre = resultados.getString("nombre");
+				String domicilio = resultados.getString("domicilio");
+				String telefono = resultados.getString("telefono");
+				String correo = resultados.getString("correo");
+				
+				socios.add(new Socio(codigo, dni, nombre, domicilio, telefono, correo));
+			}
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return socios;
 	}
 }

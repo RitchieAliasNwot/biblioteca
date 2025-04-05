@@ -282,6 +282,7 @@ public class AccesoLibro {
 	}
 	
 	// MENSAJES DE ERROR
+	
 	/**
 	 * Comprueba si el código de libro está
 	 * en un préstamo no devuelto
@@ -324,5 +325,123 @@ public class AccesoLibro {
 			}
 		}
 		return referenciado;
+	}
+	
+	// CONSULTAS AVANZADAS
+	
+	/**
+	 * Consultar libro(s) que ha(n) sido prestado(s)
+	 * menos veces (mínimo una vez)
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
+	public static ArrayList<Libro> menosPrestados() throws BDException, SQLException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		ArrayList<Libro> libros = new ArrayList<Libro>();
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT l.*, COUNT(p.codigo_libro) AS total_prestamos "
+					+ "FROM libro l "
+					+ "JOIN prestamo p ON l.codigo = p.codigo_libro "
+					+ "GROUP BY l.codigo "
+					+ "HAVING COUNT(p.codigo_libro) = ( "
+					+ 	"SELECT MIN(conteo) "
+					+ 	"FROM ( "
+					+		 "SELECT COUNT(p2.codigo_libro) AS conteo "
+					+ 		"FROM prestamo p2 "
+					+ 		"GROUP BY p2.codigo_libro"
+					+	")"
+					+ ");";
+			
+			ps = conexion.prepareStatement(query);
+			
+			ResultSet resultados = ps.executeQuery();
+			
+			while (resultados.next()) {
+				int codigo = resultados.getInt("codigo");
+				String isbn = resultados.getString("isbn");
+				String titulo = resultados.getString("titulo");
+				String escritor = resultados.getString("escritor");
+				int anyoPublicacion = resultados.getInt("anyo_publicacion");
+				double puntuacion = resultados.getDouble("puntuacion");
+				
+				libros.add(new Libro(codigo, isbn, titulo, escritor, anyoPublicacion, puntuacion));
+			}
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return libros;
+	}
+	
+	/**
+	 * Consultar los libros que han sido prestados
+	 * un nº de veces menor a la media
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
+	public static ArrayList<Libro> prestadosMenosMedia() throws BDException, SQLException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		ArrayList<Libro> libros = new ArrayList<Libro>();
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT l.*, COUNT(p.codigo_libro) AS total_prestamos "
+					+ "FROM libro l "
+					+ "JOIN prestamo p ON l.codigo = p.codigo_libro "
+					+ "GROUP BY l.codigo "
+					+ "HAVING COUNT(p.codigo_libro) < ("
+					+ 	"SELECT AVG(conteo) "
+					+ 	"FROM ("
+					+ 		"SELECT COUNT(p2.codigo_libro) AS conteo "
+					+ 		"FROM prestamo p2 "
+					+ 		"GROUP BY p2.codigo_libro"
+					+ 	")"
+					+ ");";
+			
+			ps = conexion.prepareStatement(query);
+			
+			ResultSet resultados = ps.executeQuery();
+			
+			while (resultados.next()) {
+				int codigo = resultados.getInt("codigo");
+				String isbn = resultados.getString("isbn");
+				String titulo = resultados.getString("titulo");
+				String escritor = resultados.getString("escritor");
+				int anyoPublicacion = resultados.getInt("anyo_publicacion");
+				double puntuacion = resultados.getDouble("puntuacion");
+				
+				libros.add(new Libro(codigo, isbn, titulo, escritor, anyoPublicacion, puntuacion));
+			}
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return libros;
 	}
 }
