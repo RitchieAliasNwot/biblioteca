@@ -39,7 +39,7 @@ public class Principal {
 			}
 		} while (opcion != 0);
 	}
-	
+
 	private static void menuLibros() {
 		int opcion = 0;
 
@@ -98,7 +98,7 @@ public class Principal {
 			} catch (BDException e) {
 				System.err.println(e.getMessage());
 			} catch (SQLException sqle) {
-				System.err.println(sqle.getMessage());
+				System.err.println(BDException.ERROR_QUERY + sqle.getMessage());
 			}
 		} while (opcion != 0);
 	}
@@ -160,7 +160,7 @@ public class Principal {
 			} catch (BDException e) {
 				System.err.println(e.getMessage());
 			} catch (SQLException sqle) {
-				System.err.println(sqle.getMessage());
+				System.err.println(BDException.ERROR_QUERY + sqle.getMessage());
 			}
 		} while (opcion != 0);
 	}
@@ -188,7 +188,7 @@ public class Principal {
 					int codigoSocio = Teclado.leerEntero("¿Código de socio? ");
 					String fechaInicio = Teclado.leerCadena("¿Fecha de inicio? ");
 					String fechaFin = Teclado.leerCadena("¿Fecha fin? ");
-					
+
 					if (AccesoPrestamo.prestado(codigoLibro)) {
 						System.err.println("Se ha prestado ese libro a un socio y éste aún no lo ha devuelto.");
 					} else if (AccesoPrestamo.socioEndeudado(codigoSocio)) {
@@ -201,48 +201,34 @@ public class Principal {
 					int codigoSocio = Teclado.leerEntero("¿Código de socio? ");
 					String fechaInicio = Teclado.leerCadena("¿Fecha de inicio? ");
 					String fechaDevolucion = Teclado.leerCadena("¿Nueva fecha de devolución? ");
-					
+
 					if (AccesoPrestamo.modificarPrestamo(fechaDevolucion, codigoLibro, codigoSocio, fechaInicio)) {
 						System.out.println("Se ha actualizado un préstamo en la base de datos.");
 					} else {
-						System.err.println("No existe ningún préstamo con esos datos identificativos en la base de datos.");
+						System.err.println(
+								"No existe ningún préstamo con esos datos identificativos en la base de datos.");
 					}
 				} else if (opcion == 3) {
 					int codigoLibro = Teclado.leerEntero("¿Código de libro? ");
 					int codigoSocio = Teclado.leerEntero("¿Código de socio? ");
 					String fechaInicio = Teclado.leerCadena("¿Fecha de inicio? ");
-					
+
 					if (AccesoPrestamo.eliminarPrestamo(codigoLibro, codigoSocio, fechaInicio)) {
 						System.out.println("Se ha eliminado un préstamo de la base de datos.");
 					} else {
-						System.err.println("No existe ningún préstamo con esos datos identificaticos en la base de datos.");
+						System.err.println(
+								"No existe ningún préstamo con esos datos identificaticos en la base de datos.");
 					}
 				} else if (opcion == 4) {
 					ArrayList<Prestamo> prestamos = AccesoPrestamo.consultarPrestamos();
-					
-					if (prestamos.size() == 0) {
-						System.err.println("No se ha encontrado ningún préstamo en la base de datos.");
-					} else {
-						for (Prestamo prestamo : prestamos) {
-							System.out.print(prestamo.toString());
-						}
-						System.out.println("Se han consultado " + prestamos.size() + " préstamos de la base de datos.");
-					}
+					mostrarPrestamos(prestamos);
 				} else if (opcion == 5) {
 					ArrayList<Prestamo> prestamos = AccesoPrestamo.consultarPrestamosNoDevuletos();
-					
-					if (prestamos.size() == 0) {
-						System.err.println("No existe ningún préstamo no devuleto en la base de datos.");
-					} else {
-						for (Prestamo prestamo : prestamos) {
-							System.out.print(prestamo.toString());
-						}
-						System.out.println("Se han consultado " + prestamos.size() + " préstamos de la base de datos.");
-					}
+					mostrarPrestamos(prestamos);
 				} else if (opcion == 6) {
 					String fecha = Teclado.leerCadena("¿Fecha de inicio? ");
 					String datos = AccesoPrestamo.consultarDatosFecha(fecha);
-					
+
 					if (datos.length() == 0) {
 						System.err.println("No existe ningún préstamo realizado en esa fecha en la base de datos.");
 					} else {
@@ -254,9 +240,20 @@ public class Principal {
 			} catch (BDException e) {
 				System.err.println(e.getMessage());
 			} catch (SQLException sqle) {
-				System.err.println(sqle.getMessage());
+				System.err.println(BDException.ERROR_QUERY + sqle.getMessage());
 			}
 		} while (opcion != 0);
+	}
+
+	public static void mostrarPrestamos(ArrayList<Prestamo> prestamos) {
+		if (prestamos.size() == 0) {
+			System.err.println("No se ha encontrado ningún préstamo en la base de datos.");
+		} else {
+			for (Prestamo prestamo : prestamos) {
+				System.out.print(prestamo.toString());
+			}
+			System.out.println("Se han consultado " + prestamos.size() + " préstamos de la base de datos.");
+		}
 	}
 
 	private static void menuConsultas() {
@@ -277,65 +274,77 @@ public class Principal {
 			System.out.println();
 
 			try {
-			if (opcion == 1) {
-				ArrayList<Libro> libros = AccesoLibro.menosPrestados();
-				
-				if (libros.size() == 0) {
-					System.err.println("No existe ningún libro en la base de datos.");
-				} else {
-					for (Libro libro : libros) {
-						System.out.println(libro.toString());
+				if (opcion == 1) {
+					ArrayList<Libro> libros = AccesoLibro.menosPrestados();
+
+					if (libros.size() == 0) {
+						System.err.println("No existe ningún libro prestado en la base de datos.");
+					} else {
+						for (Libro libro : libros) {
+							System.out.println(libro.toString());
+						}
+						System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
 					}
-					System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
-				}
-			} else if (opcion == 2) {
-				ArrayList<Socio> socios = AccesoSocio.masPrestamos();
-				
-				if (socios.size() == 0) {
-					System.err.println("No existe ningún socio en la base de datos");
-				} else {
-					for (Socio socio : socios) {
-						System.out.println(socio.toString());
+				} else if (opcion == 2) {
+					ArrayList<Socio> socios = AccesoSocio.masPrestamos();
+
+					if (socios.size() == 0) {
+						System.err.println("No existe ningún socio que haya realizado préstamos en la base de datos");
+					} else {
+						for (Socio socio : socios) {
+							System.out.println(socio.toString());
+						}
+						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
 					}
-					System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
-				}
-			} else if (opcion == 3) {
-				ArrayList<Libro> libros = AccesoLibro.prestadosMenosMedia();
-				
-				if (libros.size() == 0) {
-					System.err.println("No existe ningún libro en la base de datos.");
-				} else {
-					for (Libro libro : libros) {
-						System.out.println(libro.toString());
+				} else if (opcion == 3) {
+					ArrayList<Libro> libros = AccesoLibro.prestadosMenosMedia();
+
+					if (libros.size() == 0) {
+						System.err.println("No existe ningún libro que haya sido prestado en la base de datos.");
+					} else {
+						for (Libro libro : libros) {
+							System.out.println(libro.toString());
+						}
+						System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
 					}
-					System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
-				}
-			} else if (opcion == 4) {
-				ArrayList<Socio> socios = AccesoSocio.prestamosSuperiorMedia();
-				
-				if (socios.size() == 0) {
-					System.err.println("No existe ningún socio en la base de datos");
-				} else {
-					for (Socio socio : socios) {
-						System.out.println(socio.toString());
+				} else if (opcion == 4) {
+					ArrayList<Socio> socios = AccesoSocio.prestamosSuperiorMedia();
+
+					if (socios.size() == 0) {
+						System.err.println("No existe ningún socio que haya realizado préstamos en la base de datos");
+					} else {
+						for (Socio socio : socios) {
+							System.out.println(socio.toString());
+						}
+						System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
 					}
-					System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
+				} else if (opcion == 5) {
+					String consulta = AccesoLibro.datosPrestamosDescendete();
+					
+					if (consulta.length() == 0) {
+						System.err.println("No existe ningún libro prestado en la base de datos.");
+					} else {
+						System.out.println(consulta);
+					}
+				} else if (opcion == 6) {
+					String consulta = AccesoSocio.datosSociosMasPrestamos();
+					
+					if (consulta.length() == 0) {
+						System.err.println("No existe ningún libro prestado en la base de datos.");
+					} else {
+						System.out.println(consulta);
+					}
+				} else if (opcion != 0) {
+					System.err.println("La opción debe estar comprendida entre 0 y 6");
 				}
-			} else if (opcion == 5) {
-				
-			} else if (opcion == 6) {
-				
-			} else if (opcion != 0) {
-				System.err.println("La opción debe estar comprendida entre 0 y 6");
-			}
 			} catch (BDException e) {
 				System.err.println(e.getMessage());
 			} catch (SQLException sqle) {
-				System.err.println(sqle.getMessage());
+				System.err.println(BDException.ERROR_QUERY + sqle.getMessage());
 			}
 		} while (opcion != 0);
 	}
-	
+
 	public static void mostrarLibros(ArrayList<Libro> libros) {
 		if (libros.size() == 0) {
 			System.err.println("No se ha encontrado ningún libro en la base de datos.");
@@ -346,7 +355,7 @@ public class Principal {
 			System.out.println("Se han consultado " + libros.size() + " libros de la base de datos.");
 		}
 	}
-	
+
 	public static void mostrarSocios(ArrayList<Socio> socios) {
 		if (socios.size() == 0) {
 			System.err.println("No se ha encontrado ningún socio en la base de datos.");
@@ -356,5 +365,5 @@ public class Principal {
 			}
 			System.out.println("Se han consultado " + socios.size() + " socios de la base de datos.");
 		}
-	}	
+	}
 }

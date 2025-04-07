@@ -56,7 +56,6 @@ public class AccesoLibro {
 		return inserciones > 0;
 	}
 
-	// TODO Mensaje de error para libros referenciados en préstamos
 	/**
 	 * Eliminar un libro, por código, de la base de datos.
 	 * @param codigo
@@ -98,7 +97,7 @@ public class AccesoLibro {
 	}
 
 	/**
-	 * Consultar todos los libros de la base de datos.
+	 * Consultar todos los libros de la base de datos
 	 * @return
 	 * @throws BDException
 	 * @throws SQLException
@@ -145,7 +144,7 @@ public class AccesoLibro {
 	}
 
 	/**
-	 * Consultar los libros por escritor, ordenados por puntuación descendente.
+	 * Consultar los libros por escritor, ordenados por puntuación descendente
 	 * @param escritor
 	 * @return
 	 * @throws BDException
@@ -234,7 +233,7 @@ public class AccesoLibro {
 	}
 
 	/**
-	 * Consultar los libros devueltos en una fecha dada.
+	 * Consultar los libros devueltos en una fecha dada
 	 * @param fechaDevolucion
 	 * @return
 	 * @throws BDException
@@ -443,5 +442,55 @@ public class AccesoLibro {
 			}
 		}
 		return libros;
+	}
+	
+	/**
+	 * Consultar ISBN, título y número de veces prestados de los libros
+	 * ordenados por el nº de veces prestados descendente
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
+	public static String datosPrestamosDescendete() throws BDException, SQLException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		String devolver = "";
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT ISBN, titulo, COUNT(prestamo.codigo_libro) AS n_prestamos"
+					+ "FROM libro LEFT JOIN prestamo ON(codigo = codigo_libro) "
+					+ "GROUP BY codigo ORDER BY n_prestamos DESC;";
+					
+			ps = conexion.prepareStatement(query);
+			
+			ResultSet resultados = ps.executeQuery();
+			
+			for (int i = 0; resultados.next(); i++) {
+				String isbn = resultados.getString("ISBN");
+				String titulo = resultados.getString("titulo");
+				String numeroPrestamos = resultados.getString("n_prestamos");
+				
+				devolver += "Libro " + i + ":\n"
+						+ "\t [ISBN: " + isbn
+						+ " Título: " + titulo + "\n\t"
+						+ "Número de veces prestados: " + numeroPrestamos
+						+ "]\n";
+			}
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return devolver;
 	}
 }

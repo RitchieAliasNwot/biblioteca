@@ -17,7 +17,6 @@ public class AccesoPrestamo {
 
 	/**
 	 * Insertar un préstamo en la base de datos
-	 * 
 	 * @param codigo
 	 * @param isbn
 	 * @param titulo
@@ -68,7 +67,6 @@ public class AccesoPrestamo {
 	/**
 	 * Modificar la fecha de devolución de un préstamo identificado por código de
 	 * libro y código de socio
-	 * 
 	 * @param fechaDevolucion
 	 * @param codigoLibro
 	 * @param codigoSocio
@@ -114,7 +112,6 @@ public class AccesoPrestamo {
 
 	/**
 	 * Eliminar un préstamo de la base de datos
-	 * 
 	 * @param codigoLibro
 	 * @param codigoSocio
 	 * @param fechaInicio
@@ -160,7 +157,6 @@ public class AccesoPrestamo {
 
 	/**
 	 * Consultar todos los préstamos de la base de datos
-	 * 
 	 * @return
 	 * @throws BDException
 	 * @throws SQLException
@@ -216,7 +212,6 @@ public class AccesoPrestamo {
 
 	/**
 	 * Consultar los préstamos no devueltos de la base de datos
-	 * 
 	 * @return
 	 * @throws BDException
 	 * @throws SQLException
@@ -293,7 +288,6 @@ public class AccesoPrestamo {
 
 			ResultSet resultados = ps.executeQuery();
 			
-			// TODO quitar fecha inicio del resultado de la consulta
 			int contador = 0;
 			while (resultados.next()) {
 				String dni = resultados.getString("dni");

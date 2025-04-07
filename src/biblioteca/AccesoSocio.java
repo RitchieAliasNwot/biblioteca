@@ -458,4 +458,53 @@ public class AccesoSocio {
 		}
 		return socios;
 	}
+	
+	/**
+	 * Consultar DNI, nombre y nº de préstamos realizados
+	 * ordenador por el nº de préstamos descendente
+	 * @return
+	 * @throws BDException
+	 * @throws SQLException
+	 */
+	public static String datosSociosMasPrestamos() throws BDException, SQLException {
+		Connection conexion = null;
+		PreparedStatement ps = null;
+		String devolver = "";
+		
+		try {
+			conexion = ConfigSQLite.abrirConexion();
+			// No se ha podido abrir la conexión
+			if (conexion == null) {
+				throw new BDException(BDException.ERROR_ABRIR_CONEXION);
+			}
+
+			String query = "SELECT dni, nombre, COUNT(codigo_socio) AS n_prestamos"
+					+ "FROM socio JOIN prestamo ON(codigo = codigo_socio) "
+					+ "GROUP BY codigo ORDER BY n_prestamos DESC;";
+					
+			ps = conexion.prepareStatement(query);
+			
+			ResultSet resultados = ps.executeQuery();
+			
+			for (int i = 0; resultados.next(); i++) {
+				String dni = resultados.getString("dni");
+				String nombre = resultados.getString("nombre");
+				int numeroPrestamos = resultados.getInt("n_prestamos");
+				
+				devolver += "Socio " + i + " :\n\t"
+						+ "[DNI: " + dni + " Nombre: " + nombre
+						+ "\n\t Número de préstamos: " + numeroPrestamos
+						+ "]\n";
+			}
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				throw new BDException(BDException.ERROR_CERRAR_CONEXION);
+			}
+		}
+		return devolver;
+	}
 }
