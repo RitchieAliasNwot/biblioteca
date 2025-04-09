@@ -98,7 +98,7 @@ public class Principal {
 			} catch (BDException e) {
 				System.err.println(e.getMessage());
 			} catch (SQLException sqle) {
-				System.err.println(sqle.getMessage());
+				System.err.println(BDException.ERROR_QUERY + sqle.getMessage());
 			}
 		} while (opcion != 0);
 	}
@@ -160,7 +160,7 @@ public class Principal {
 			} catch (BDException e) {
 				System.err.println(e.getMessage());
 			} catch (SQLException sqle) {
-				System.err.println(sqle.getMessage());
+				System.err.println(BDException.ERROR_QUERY + sqle.getMessage());
 			}
 		} while (opcion != 0);
 	}
@@ -240,7 +240,7 @@ public class Principal {
 			} catch (BDException e) {
 				System.err.println(e.getMessage());
 			} catch (SQLException sqle) {
-				System.err.println(sqle.getMessage());
+				System.err.println(BDException.ERROR_QUERY + sqle.getMessage());
 			}
 		} while (opcion != 0);
 	}
@@ -340,7 +340,7 @@ public class Principal {
 			} catch (BDException e) {
 				System.err.println(e.getMessage());
 			} catch (SQLException sqle) {
-				System.err.println(sqle.getMessage());
+				System.err.println(BDException.ERROR_QUERY + sqle.getMessage());
 			}
 		} while (opcion != 0);
 	}
